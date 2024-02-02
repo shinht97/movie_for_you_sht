@@ -49,9 +49,9 @@
   <widget class="QLineEdit" name="le_keyword">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>200</x>
      <y>90</y>
-     <width>391</width>
+     <width>361</width>
      <height>31</height>
     </rect>
    </property>
@@ -69,12 +69,12 @@
     <rect>
      <x>40</x>
      <y>90</y>
-     <width>121</width>
+     <width>161</width>
      <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>키워드 입력</string>
+    <string>키워드/영화 제목</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btn_recommendation">

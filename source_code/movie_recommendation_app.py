@@ -30,12 +30,20 @@ class Main(QWidget, form_window):
         self.titles = list(self.df_reviews["titles"])
         self.titles.sort()
 
+        self.cb_movie_list.addItem("")
+        
         for title in self.titles:
             self.cb_movie_list.addItem(title)  # 콤보 박스에 아이템 추가
 
         self.cb_movie_list.currentIndexChanged.connect(self.cb_movie_list_changed_slot)  # 콤보박스의 아이템이 변경되면 실행
 
         self.btn_recommendation.clicked.connect(self.btn_recommendation_click_slot)  # 키워드를 통한 버튼 클릭시 실행
+        
+        model = QStringListModel()
+        model.setStringList(self.titles)  # 자동완성에 대한 리스트를 줌
+        completer = QCompleter(model)
+        completer.setModel(model)
+        self.le_keyword.setCompleter(completer)  # 자동완성 기능을 추가
 
     def getRecommendation(self, cosine_sim):
         simScore = list(enumerate(cosine_sim[-1]))  # enumerate를 통해 idx 값도 같이
@@ -62,7 +70,11 @@ class Main(QWidget, form_window):
         self.lbl_recommendation.setText(recommendation)
 
     def recommendation_by_keyword(self, keyword):
-        sim_word = self.embedding_model.wv.most_similar(keyword, topn=10)  # 주어진 단어와 유사한 단어 10개 추출
+        try:
+            sim_word = self.embedding_model.wv.most_similar(keyword, topn=10)  # 주어진 단어와 유사한 단어 10개 추출
+        except:
+            recommendation = "모르는 키워드 입니다."
+            return recommendation
 
         words = [keyword]
 
@@ -92,9 +104,15 @@ class Main(QWidget, form_window):
     def btn_recommendation_click_slot(self):
         keyword = self.le_keyword.text()
         # print(keyword)
-        recommendation = self.recommendation_by_keyword(keyword)
-
-        self.lbl_recommendation.setText(recommendation)
+        if keyword != "":
+            if keyword in self.titles:
+                recommendation = self.recommendation_by_movie_title(keyword)
+            else:
+                recommendation = self.recommendation_by_keyword(keyword)
+    
+            self.lbl_recommendation.setText(recommendation)
+        else:
+            self.lbl_recommendation.setText("키워드나 영화 제목을 입력해주세요")
 
 
 if __name__ == "__main__":
